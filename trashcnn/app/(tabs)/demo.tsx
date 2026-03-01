@@ -5,6 +5,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
+  const [garbageType, setGarbageType] = useState<string | null>(null);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library.
@@ -32,30 +33,30 @@ export default function ImagePickerExample() {
       const localUri = result.assets[0].uri;
       setImage(localUri);
       
-      //ok i can maybe explain the rest of the code but i have NO IDEA what this does this sohuld send to api
-      // const filename = localUri.split('/').pop();
-      // const match = /\.(\w+)$/.exec(filename || '');
-      // const type = match ? 'image/$(match[1]}' : 'image';
+      // Send image to backend API
+      const filename = localUri.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename || '');
+      const type = match ? `image/${match[1]}` : 'image';
 
-      // const formData = new FormData();
-      // formData.append('file', {uri: localUri, name: filename, type} as any);
-      // try {
-      //   const response = await fetch('BACKEND GOES HERE', {
-      //     method: 'POST',
-      //     body: formData,
-      //     headers: {
-      //       'Contend-Type': 'multipart/form-data',
-      //     },
-      //   });
-      //   const data = await response.json();
-      //   console.log('Server response', data);
-      //   //some type of function to take the garbage type into a text form to display
-      //   console.log('Server response:', data);
-      //   Alert.alert('Upload success', JSON.stringify(data));
-      // } catch (error){
-      //   console.error('Upload error:', error);
-      //   Alert.alert('Something went wrong', 'please try again later');   
-      // }
+      const formData = new FormData();
+      formData.append('file', {uri: localUri, name: filename, type} as any);
+      try {
+        const response = await fetch('YOUR_BACKEND_URL_HERE', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        const data = await response.json();
+        console.log('Server response:', data);
+        // Store the garbage classification result
+        setGarbageType(data.garbage_type || data.type || JSON.stringify(data));
+        Alert.alert('Upload success', JSON.stringify(data));
+      } catch (error){
+        console.error('Upload error:', error);
+        Alert.alert('Something went wrong', 'please try again later');   
+      }
     }
   };
   return (
@@ -63,7 +64,7 @@ export default function ImagePickerExample() {
       <Text style={styles.title}>Future Fusion AI</Text>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is (blank)</Text>}
+      {image && <Text style={styles.title}>Your garbage is {garbageType || '(analyzing...)'}</Text>}
     </View>
   );
 }

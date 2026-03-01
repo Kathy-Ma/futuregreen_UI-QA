@@ -1,6 +1,11 @@
 import { useState } from 'react';
-import { Alert, Button, Image, View, StyleSheet } from 'react-native';
+import { Alert, Button, Image, View, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { Link } from 'expo-router';
+import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { ThemedView } from '@/components/themed-view';
+import { ThemedText } from '@/components/themed-text';
+import { HelloWave } from '@/components/hello-wave';
 
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
@@ -111,6 +116,22 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+  },
+  reactLogo: {
+    height: 178,
+    width: 290,
+    bottom: 0,
+    left: 0,
+    position: 'absolute',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  stepContainer: {
+    gap: 8,
+    marginBottom: 8,
   },
 });
 
