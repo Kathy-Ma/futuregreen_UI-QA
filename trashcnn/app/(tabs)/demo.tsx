@@ -15,6 +15,7 @@ export default function ImagePickerExample() {
       mediaTypes: ['images'],
       aspect: [4,3],
       quality: 1,
+      allowsEditing: true,
       base64: true,
     });
     console.log(resultCamera);
