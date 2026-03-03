@@ -1,8 +1,9 @@
 /*lmao i have no idea how this code works*/
 import { useState } from 'react';
 import { Alert, Button, Image, Text, View, StyleSheet } from 'react-native';
+import { predictImage } from '@/services/api';
+
 import * as ImagePicker from 'expo-image-picker';
-import 'react-native-quick-base64'
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
   const takePhoto = async () => {
@@ -23,26 +24,25 @@ export default function ImagePickerExample() {
     if (!resultCamera.canceled && resultCamera.assets?.length > 0) {
   const asset = resultCamera.assets[0];
   setImage(asset.uri);
+  if (!asset.base64) {
+    console.error('No base64 data available');
+    return;
+  }
+
   const base64Image = asset.base64;
 
   try {
-    const response = await fetch('backend goes here', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        image: base64Image,
-      }),
-    });
-
-    const data = await response.json();
-    console.log('Server response:', data);
-    Alert.alert('Result', JSON.stringify(data));
+    const result = await predictImage(
+      base64Image,
+      asset.fileName ?? 'image.jpg',
+      asset.width,
+      asset.height,
+    );
+    console.log('Prediction result:', result);
   } catch (error) {
-    console.error(error);
-    Alert.alert('Upload failed', 'Try again.');
+    console.error('Error predicting image:', error);
   }
+
 }
   }
 
@@ -70,23 +70,21 @@ export default function ImagePickerExample() {
   setImage(asset.uri);
   const base64Image = asset.base64;
 
-  try {
-    const response = await fetch('backend goes here', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        image: base64Image,
-      }),
-    });
+  if (!asset.base64) {
+    console.error('No base64 data available');
+    return;
+  }
 
-    const data = await response.json();
-    console.log('Server response:', data);
-    Alert.alert('Result', JSON.stringify(data));
+  try {
+    const result = await predictImage(
+      asset.base64,
+      asset.fileName ?? 'image.jpg',
+      asset.width,
+      asset.height,
+    );
+    console.log('Prediction result:', result);
   } catch (error) {
-    console.error(error);
-    Alert.alert('Upload failed', 'Try again.');
+    console.error('Error predicting image:', error);
   }
 }
   };
@@ -96,7 +94,7 @@ export default function ImagePickerExample() {
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       <Button title="or take a photo with your camera" onPress={takePhoto}/>
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is {garbageType || '(analyzing...)'}</Text>}
+      {image && <Text style={styles.title}>Your garbage is {'(analyzing...)'}</Text>}
     </View>
   );
 }

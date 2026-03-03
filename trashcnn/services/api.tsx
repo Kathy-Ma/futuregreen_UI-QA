@@ -1,28 +1,23 @@
-const HOST = "http://127.0.0.1:8000";
+const HOST = "http://127.0.0.1:8000/api";
 
-export async function predictImage(imageUri: string) {
+export async function predictImage(base64Data: string, fileName: string, width: number, height: number) {
     try {
-        const formData = new FormData();
-
-        const file: any = {
-            uri: imageUri,
-            type: "image/jpeg",
-            name: "upload.jpg",
+        const body = {
+            image_name: fileName,
+            image_data: base64Data,  // already base64, no conversion needed
+            image_width: width,
+            image_height: height,
         };
 
-        formData.append("image", file);
-
-        const response = await fetch(HOST + "/predict", {
+        const res = await fetch(HOST + "/predict/", {
             method: "POST",
-            body: formData,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return await res.json();
 
-        const result = await response.json();
-        return result;
     } catch (error) {
         console.error("Error predicting image:", error);
         throw error;
