@@ -96,7 +96,7 @@ export default function ImagePickerExample() {
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       <Button title="or take a photo with your camera" onPress={takePhoto}/>
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is (blank)</Text>}
+      {image && <Text style={styles.title}>Your garbage is {garbageType || '(analyzing...)'}</Text>}
     </View>
   );
 }
