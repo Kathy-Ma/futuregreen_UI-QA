@@ -6,6 +6,7 @@ import { predictImage } from '@/services/api';
 import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
+  const [apiResult, setApiResult] = useState<any>(null);
   const takePhoto = async () => {
     const cameraResult = await ImagePicker.requestCameraPermissionsAsync();
     if(!cameraResult.granted) {
@@ -39,6 +40,7 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
+    setApiResult(result);
   } catch (error) {
     console.error('Error predicting image:', error);
   }
@@ -83,6 +85,7 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
+    setApiResult(result);
   } catch (error) {
     console.error('Error predicting image:', error);
   }
@@ -94,7 +97,8 @@ export default function ImagePickerExample() {
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       <Button title="or take a photo with your camera" onPress={takePhoto}/>
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is {'(analyzing...)'}</Text>}
+      {image && <Text style={styles.title}>Your garbage is {apiResult ? JSON.stringify(apiResult) : '(analyzing...)'}</Text>}
+      {apiResult && <Text style={styles.title}>Results: {JSON.stringify(apiResult)}</Text>}
     </View>
   );
 }
