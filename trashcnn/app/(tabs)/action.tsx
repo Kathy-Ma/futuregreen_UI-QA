@@ -97,14 +97,25 @@ export default function ImagePickerExample() {
 }
   };
   return (
+    
     <View style={styles.container}>
-      <Text style={styles.title}>Future Fusion AI</Text>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      <Button title="or take a photo with your camera" onPress={takePhoto}/>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
-      {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
-    </View>
+       <Text style={styles.title}>Future Fusion AI</Text>
+
+  <TouchableOpacity style={{backgroundColor: 'lightblue', padding: 6, borderRadius: 11}} onPress={pickImage}>
+    <Text style={{fontSize: 18, fontWeight: "600"}}>Upload from Camera Roll</Text>
+  </TouchableOpacity>
+
+    <View style={{ height: 20 }} />
+
+  <TouchableOpacity style={{backgroundColor: 'lightblue', padding: 6, borderRadius: 11}} onPress={takePhoto}>
+    <Text style={{fontSize: 18, fontWeight: "600"}}>Take Photo</Text>
+  </TouchableOpacity>
+
+  {image && <Image source={{ uri: image }} style={styles.image} />}
+
+  {image && <Text style={styles.resultTitle}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
+  {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
+</View>
   );
 }
 
@@ -115,23 +126,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     /*this means everythings starts at the top lmao*/
     justifyContent: 'flex-start',
-    paddingTop: 200,
+    paddingTop: 100,
   },
   title:{
     fontSize:30,
     color: '#FFFF',
     fontWeight:'bold',
-    marginBottom: 40,
+    marginBottom: 60,
   },
-  subtitle: {
+  resultTitle:{
+    fontSize:30,
+    color: '#FFFF',
+    fontWeight:'bold',
+    marginBottom:20,
+  },
+  subtitle:{
     fontSize: 20,
     color: '#FFFF',
     fontWeight: 'normal',
-    marginTop: 10,
+    marginTop: 5,
   },
   image: {
     width: 200,
     height: 300,
+    marginTop:15,
+    marginBottom:15,
   },
 });
 
