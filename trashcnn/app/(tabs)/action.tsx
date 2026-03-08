@@ -1,9 +1,10 @@
 /*lmao i have no idea how this code works*/
 import { useState } from 'react';
-import { Alert, Button, Image, Text, View, StyleSheet } from 'react-native';
+import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { predictImage } from '@/services/api';
 
 import * as ImagePicker from 'expo-image-picker';
+import { HeaderTitle } from '@react-navigation/elements';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
   const takePhoto = async () => {
@@ -90,12 +91,22 @@ export default function ImagePickerExample() {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Future Fusion AI</Text>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      <Button title="or take a photo with your camera" onPress={takePhoto}/>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is {'(analyzing...)'}</Text>}
-    </View>
+  <Text style={styles.title}>Future Fusion AI</Text>
+
+  <TouchableOpacity style={{backgroundColor: 'lightblue', padding: 6, borderRadius: 11}} onPress={pickImage}>
+    <Text style={{fontSize: 18, fontWeight: "600"}}>Upload from Camera Roll</Text>
+  </TouchableOpacity>
+
+    <View style={{ height: 20 }} />
+
+  <TouchableOpacity style={{backgroundColor: 'lightblue', padding: 6, borderRadius: 11}} onPress={takePhoto}>
+    <Text style={{fontSize: 18, fontWeight: "600"}}>Take Photo</Text>
+  </TouchableOpacity>
+
+  {image && <Image source={{ uri: image }} style={styles.image} />}
+
+  {image && <Text style={styles.title}>Your garbage is (analyzing...)</Text>}
+</View>
   );
 }
 
@@ -106,13 +117,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     /*this means everythings starts at the top lmao*/
     justifyContent: 'flex-start',
-    paddingTop: 60,
+    paddingTop: 200,
   },
   title:{
     fontSize:30,
     color: '#FFFF',
     fontWeight:'bold',
-    marginBottom: 100,
+    marginBottom: 40,
   },
   image: {
     width: 200,
