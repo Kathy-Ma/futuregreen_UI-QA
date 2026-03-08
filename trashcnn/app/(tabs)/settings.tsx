@@ -25,25 +25,17 @@ export default function TabTwoScreen() {
         <ThemedText
           type="title"
           style={{
-            fontFamily: Fonts.rounded,
           }}>
-          Explore
+          Settings
         </ThemedText>
       </ThemedView>
-      <ThemedText>Hello my name is Mike.</ThemedText>
-      <Collapsible title="File-based routing">
+      <ThemedText>Light/Dark Mode: (insert a toggle switch)</ThemedText>
+      <Collapsible title="Troubleshooting">
         <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
+        Ensure that your image is at least ___ resolution. Also, there can only be one object that must be fully visible in frame. Finally, make sure the background is relatively solid with no major distractions.
         </ThemedText>
         <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
         </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
       </Collapsible>
       <Collapsible title="Android, iOS, and web support">
         <ThemedText>
