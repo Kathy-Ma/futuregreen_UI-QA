@@ -4,7 +4,6 @@ import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity } from '
 import { predictImage } from '@/services/api';
 
 import * as ImagePicker from 'expo-image-picker';
-import { HeaderTitle } from '@react-navigation/elements';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
