@@ -49,8 +49,12 @@ export default function ImagePickerExample() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
+
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
+        <ThemedText>The future of waste sorting is here. Follow the steps below, and let Future Fusion AI decide where your garbage belongs. </ThemedText>
+        <ThemedView style={[styles.stepContainer, { marginBottom: 10 }]}>
+        </ThemedView>
         <ThemedText type="subtitle">Step 1: Upload or Take an Image</ThemedText>
         <ThemedText>
           Upload an image from your gallery, or take a photo directly through your camera. Ensure there is only one object, fully in frame.
@@ -114,7 +118,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 5,
   },
   stepContainer: {
     gap: 8,
