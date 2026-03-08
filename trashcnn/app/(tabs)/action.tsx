@@ -1,9 +1,10 @@
 /*lmao i have no idea how this code works*/
 import { useState } from 'react';
-import { Alert, Button, Image, Text, View, StyleSheet } from 'react-native';
+import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { predictImage } from '@/services/api';
 
 import * as ImagePicker from 'expo-image-picker';
+import { HeaderTitle } from '@react-navigation/elements';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
@@ -114,13 +115,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     /*this means everythings starts at the top lmao*/
     justifyContent: 'flex-start',
-    paddingTop: 60,
+    paddingTop: 200,
   },
   title:{
     fontSize:30,
     color: '#FFFF',
     fontWeight:'bold',
-    marginBottom: 100,
+    marginBottom: 40,
   },
   subtitle: {
     fontSize: 20,
