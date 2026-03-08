@@ -1,4 +1,4 @@
-const HOST = "http://127.0.0.1:8000/api";
+const HOST = "https://ethnyao.pythonanywhere.com/api";
 
 export async function predictImage(base64Data: string, fileName: string, width: number, height: number) {
     try {
