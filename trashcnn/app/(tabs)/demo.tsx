@@ -1,10 +1,9 @@
 /*lmao i have no idea how this code works*/
 import { useState } from 'react';
-import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert, Button, Image, Text, View, StyleSheet } from 'react-native';
 import { predictImage } from '@/services/api';
 
 import * as ImagePicker from 'expo-image-picker';
-import { HeaderTitle } from '@react-navigation/elements';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
@@ -42,8 +41,6 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
-    setPredictionResult(result.prediction_result);
-    setConfidence(result.confidence);
   } catch (error) {
     console.error('Error predicting image:', error);
   }
@@ -73,17 +70,16 @@ export default function ImagePickerExample() {
     if (!result.canceled && result.assets?.length > 0) {
   const asset = result.assets[0];
   setImage(asset.uri);
+  const base64Image = asset.base64;
 
   if (!asset.base64) {
     console.error('No base64 data available');
     return;
   }
 
-  const base64Image = asset.base64;
-
   try {
     const result = await predictImage(
-      base64Image,
+      asset.base64,
       asset.fileName ?? 'image.jpg',
       asset.width,
       asset.height,
@@ -115,13 +111,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     /*this means everythings starts at the top lmao*/
     justifyContent: 'flex-start',
-    paddingTop: 200,
+    paddingTop: 60,
   },
   title:{
     fontSize:30,
     color: '#FFFF',
     fontWeight:'bold',
-    marginBottom: 40,
+    marginBottom: 100,
   },
   subtitle: {
     fontSize: 20,
