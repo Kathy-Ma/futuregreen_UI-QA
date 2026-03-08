@@ -6,6 +6,8 @@ import { predictImage } from '@/services/api';
 import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
+  const [predictionResult, setPredictionResult] = useState<string | null>(null);
+  const [confidence, setConfidence] = useState<number | null>(null);
   const takePhoto = async () => {
     const cameraResult = await ImagePicker.requestCameraPermissionsAsync();
     if(!cameraResult.granted) {
@@ -83,6 +85,8 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
+    setPredictionResult(result.prediction_result);
+    setConfidence(result.confidence);
   } catch (error) {
     console.error('Error predicting image:', error);
   }
@@ -94,7 +98,8 @@ export default function ImagePickerExample() {
       <Button title="Pick an image from camera roll" onPress={pickImage} />
       <Button title="or take a photo with your camera" onPress={takePhoto}/>
       {image && <Image source={{ uri: image }} style={styles.image} />}
-      {image && <Text style={styles.title}>Your garbage is {'(analyzing...)'}</Text>}
+      {image && <Text style={styles.title}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
+      {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
     </View>
   );
 }
@@ -113,6 +118,12 @@ const styles = StyleSheet.create({
     color: '#FFFF',
     fontWeight:'bold',
     marginBottom: 100,
+  },
+  subtitle: {
+    fontSize: 20,
+    color: '#FFFF',
+    fontWeight: 'normal',
+    marginTop: 10,
   },
   image: {
     width: 200,
