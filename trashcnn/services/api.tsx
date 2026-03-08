@@ -1,4 +1,6 @@
 const HOST = "https://ethnyao.pythonanywhere.com/api";
+// const HOST = "http://127.0.0.1:8000/api"; //local host ip address (used for testing when pythonAnywhere server doesnt work)
+
 
 export async function predictImage(base64Data: string, fileName: string, width: number, height: number) {
     try {

@@ -41,8 +41,6 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
-    setPredictionResult(result.prediction_result);
-    setConfidence(result.confidence);
   } catch (error) {
     console.error('Error predicting image:', error);
   }
@@ -72,17 +70,16 @@ export default function ImagePickerExample() {
     if (!result.canceled && result.assets?.length > 0) {
   const asset = result.assets[0];
   setImage(asset.uri);
+  const base64Image = asset.base64;
 
   if (!asset.base64) {
     console.error('No base64 data available');
     return;
   }
 
-  const base64Image = asset.base64;
-
   try {
     const result = await predictImage(
-      base64Image,
+      asset.base64,
       asset.fileName ?? 'image.jpg',
       asset.width,
       asset.height,
