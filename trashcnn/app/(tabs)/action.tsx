@@ -1,11 +1,11 @@
 /*lmao i have no idea how this code works*/
 import { useState } from 'react';
-import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity, useColorScheme} from 'react-native';
 import { predictImage } from '@/services/api';
-
 import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const takePhoto = async () => {
@@ -41,6 +41,8 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
+    const msg = binCheck(result.prediction_result);
+    setMessage(msg);
     setPredictionResult(result.prediction_result);
     setConfidence(result.confidence);
   } catch (error) {
@@ -88,6 +90,8 @@ export default function ImagePickerExample() {
       asset.height,
     );
     console.log('Prediction result:', result);
+    const msg = binCheck(result.prediction_result);
+    setMessage(msg);
     setPredictionResult(result.prediction_result);
     setConfidence(result.confidence);
   } catch (error) {
@@ -114,10 +118,11 @@ export default function ImagePickerExample() {
 
   {image && <Text style={styles.resultTitle}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
   {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
+  {message && <Text style={styles.subtitle}>{message}</Text>}
 </View>
+
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -144,12 +149,39 @@ const styles = StyleSheet.create({
     color: '#FFFF',
     fontWeight: 'normal',
     marginTop: 5,
+    textAlign: 'center',
   },
   image: {
-    width: 200,
+    width: 200, 
     height: 300,
     marginTop:15,
     marginBottom:15,
   },
 });
-
+//lowk the model is wrong so much but whatever thats not my problem
+function binCheck (trashtype: string){
+  let message = null
+  if (trashtype=="metal"){
+    message = "This goes in the recycling bin, remember to remove any food or liquids inside"
+  }
+  else if (trashtype=="paper"){
+    message = "This goes in the recycling bin, remember to remove any contents inside"
+  }
+  else if (trashtype=="cardboard"){
+    message = "This goes in the recycling bin, please flatten and remove any food residue"
+  }
+  else if (trashtype=="glass"){
+    message = "This goes in the recycling bin, please remove any liquids inside and remove the lid if it is present"
+  }
+  else if (trashtype=="plastic"){
+    message = "This goes in the recycling bin, please remove any food residue"
+  }
+  else if (trashtype=="trash"){
+    message = "This goes in the garbage bin"
+  }
+  else if (trashtype=="organic"){
+    message = "This goes in the organics (green) bin, make sure all packaging is removed"
+  }
+  console.log(message)
+  return message
+}
