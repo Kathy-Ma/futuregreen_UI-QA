@@ -172,7 +172,16 @@ const closeReview = () => {
   onChangeText={setReviewText}
   multiline
 />
-<TouchableOpacity style={styles.imageBubble2} onPress={() => submitReview(starState,reviewText)}>
+<TouchableOpacity style={styles.imageBubble2} onPress={async () => {
+  try {
+    await submitReview(starState, reviewText);
+    Alert.alert("Thanks for your feedback");
+    closeReview();
+  } catch (err) {
+    console.error(err);
+    Alert.alert("Failed to submit review");
+  }
+}}>
       <Text style={styles.bubbleText}>Submit Review</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.imageBubble2} onPress={closeReview}>
