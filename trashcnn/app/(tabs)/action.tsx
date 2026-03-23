@@ -1,12 +1,31 @@
 import { useState } from 'react';
-import { Alert, Button, Image, Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, ImageBackground, ScrollView} from 'react-native';
-import { predictImage, submitReview } from '@/services/api';
+import { Alert, Image, Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, ImageBackground, ScrollView} from 'react-native';
+import { predictImage, submitReview, submitModelResults, TrashType } from '@/services/api';
 import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
+  const [base64Image, setBase64Image] = useState<string | null>(null);
   const [previousImages, setPreviousImages] = useState<
   { uri: string; prediction: string | null; confidence: number | null }[]
 >([]);
   const [image, setImage] = useState<string | null>(null);
+  const [failVisible, setfailVisible] = useState(false);
+  const toTrashType = (value: string | null): TrashType | null => {
+  if (!value) return null;
+
+  const normalized = value.toLowerCase();
+
+  if (Object.values(TrashType).includes(normalized as TrashType)) {
+    return normalized as TrashType;
+  }
+
+  return null;
+};
+  const openFail = () => {
+    setfailVisible(true);
+  };
+  const closeFail = () => {
+    setfailVisible(false);
+  };
   const [reviewVisible, setReviewVisible] = useState(false);
   const openReview = () => {
   setReviewVisible(true);
@@ -20,6 +39,7 @@ const closeReview = () => {
   const handleStarPress = (rating: number) => {
   setStarState(rating);
 };
+  const [failText, setfailText] = useState('');
   const [reviewText, setReviewText] = useState('');
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
@@ -47,6 +67,7 @@ const closeReview = () => {
   }
 
   const base64Image = asset.base64;
+  setBase64Image(base64Image);
 
   try {
     const result = await predictImage(
@@ -103,6 +124,7 @@ const closeReview = () => {
   }
 
   const base64Image = asset.base64;
+  setBase64Image(base64Image);
 
   try {
     const result = await predictImage(
@@ -136,6 +158,7 @@ const closeReview = () => {
     resizeMode="cover"
     >
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 50 }}>
+        
         <Modal
   animationType="fade"
   transparent={true}
@@ -190,6 +213,56 @@ const closeReview = () => {
       </ImageBackground>
     </View>
 </Modal>
+<Modal
+  animationType="fade"
+  transparent={true}
+  visible={failVisible}
+  onRequestClose={closeFail}
+>
+  <View style={styles.modalOverlay}>
+    <ImageBackground
+  source={require('@/assets/UIQAimages/popupBackground.png')}
+  style={styles.modalContent}
+  resizeMode="cover"
+>
+      <Text style={styles.title2}>What trash was it?</Text>
+  <TextInput
+  style={styles.subtitle}
+  placeholder="Write trash type here"
+  placeholderTextColor="#ccc"
+  value={failText}
+  onChangeText={setfailText}
+  multiline
+/>
+<TouchableOpacity style={styles.imageBubble2} onPress={async () => {
+  try {
+    const predicted = toTrashType(predictionResult);
+    const actual = toTrashType(failText);
+
+    if (!predicted || !actual) {
+      Alert.alert("Invalid trash type");
+      return;
+    }
+    if (!base64Image) {
+  Alert.alert("No image data available");
+  return;
+}
+    await submitModelResults(predicted, actual,base64Image );
+    Alert.alert("Thanks for your feedback");
+    closeFail();
+  } catch (err) {
+    console.error(err);
+    Alert.alert("Failed to submit feedback");
+  }
+}}>
+      <Text style={styles.bubbleText}>Submit feedback</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.imageBubble2} onPress={closeFail}>
+      <Text style={styles.bubbleText}>close</Text>
+      </TouchableOpacity>
+      </ImageBackground>
+    </View>
+</Modal>
        <Text style={styles.title}>Future Fusion AI</Text>
 
   <TouchableOpacity style={styles.imageBubble} onPress={pickImage}>
@@ -207,11 +280,16 @@ const closeReview = () => {
   {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
   {message && <Text style={styles.subtitle}>{message}</Text>}
   {previousImages.length != 0 ? (
- <TouchableOpacity style={styles.imageBubble} onPress={openReview}>
+ <TouchableOpacity style={styles.imageBubble2} onPress={openReview}>
   <Text style={styles.bubbleText}>How'd we do?</Text>
 </TouchableOpacity>
   ):null}
-  <Text style={styles.title2}>Previous Images</Text>
+  {previousImages.length != 0? (
+  <TouchableOpacity style={styles.imageBubble} onPress={openFail}>
+  <Text style={styles.bubbleText}>Did we get it wrong?</Text>
+  </TouchableOpacity>
+  ):null}
+<Text style={styles.title2}>Previous Images</Text>
   <ScrollView horizontal style={{ marginTop: 20 }}>
   {previousImages.length == 0 ? (
     <Text style={styles.subtitle}>Nothing here yet</Text>
