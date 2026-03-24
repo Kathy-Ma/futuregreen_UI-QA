@@ -39,8 +39,8 @@ const closeReview = () => {
   const handleStarPress = (rating: number) => {
   setStarState(rating);
 };
-  const [failText, setfailText] = useState('');
   const [reviewText, setReviewText] = useState('');
+  const [selectedTrashType, setSelectedTrashType] = useState<TrashType | null>(null);
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<number | null>(null);
   const takePhoto = async () => {
@@ -69,6 +69,10 @@ const closeReview = () => {
   const base64Image = asset.base64;
   setBase64Image(base64Image);
 
+  setPredictionResult(null);
+  setConfidence(null);
+  setMessage(null);
+
   try {
     const result = await predictImage(
       base64Image,
@@ -77,6 +81,20 @@ const closeReview = () => {
       asset.height,
     );
     console.log('Prediction result:', result);
+    if (result.error) {
+      setPredictionResult("rejected");
+      setMessage("Rejection: " + result.error);
+      setConfidence(null);
+      setPreviousImages(prev => [
+        ...prev,
+        {
+          uri: asset.uri,
+          prediction: "rejected",
+          confidence: null,
+        },
+      ]);
+      return;
+    }
     const msg = binCheck(result.prediction_result);
     setMessage(msg);
     setPredictionResult(result.prediction_result);
@@ -126,6 +144,10 @@ const closeReview = () => {
   const base64Image = asset.base64;
   setBase64Image(base64Image);
 
+  setPredictionResult(null);
+  setConfidence(null);
+  setMessage(null);
+
   try {
     const result = await predictImage(
       base64Image,
@@ -134,6 +156,20 @@ const closeReview = () => {
       asset.height,
     );
     console.log('Prediction result:', result);
+    if (result.error) {
+      setPredictionResult("rejected");
+      setMessage("Rejection: " + result.error);
+      setConfidence(null);
+      setPreviousImages(prev => [
+        ...prev,
+        {
+          uri: asset.uri,
+          prediction: "rejected",
+          confidence: null,
+        },
+      ]);
+      return;
+    }
     const msg = binCheck(result.prediction_result);
     setMessage(msg);
     setPredictionResult(result.prediction_result);
@@ -226,21 +262,39 @@ const closeReview = () => {
   resizeMode="cover"
 >
       <Text style={styles.title2}>What trash was it?</Text>
-  <TextInput
-  style={styles.subtitle}
-  placeholder="Write trash type here"
-  placeholderTextColor="#ccc"
-  value={failText}
-  onChangeText={setfailText}
-  multiline
-/>
+      <ScrollView contentContainerStyle={styles.trashButtonsContainer}>
+        {Object.values(TrashType).map((type) => {
+          const icons: Record<TrashType, string> = {
+            cardboard: '📦',
+            glass: '🥤',
+            metal: '🥫',
+            paper: '📄',
+            plastic: '🧴',
+            trash: '🗑️',
+            organic: '🍎',
+            rejected: '❌',
+          };
+          return (
+            <TouchableOpacity
+              key={type}
+              style={[
+                styles.trashButton,
+                selectedTrashType === type && styles.selectedTrashButton,
+              ]}
+              onPress={() => setSelectedTrashType(type as TrashType)}
+            >
+              <Text style={styles.trashButtonText}>{icons[type as TrashType]} {type}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
 <TouchableOpacity style={styles.imageBubble2} onPress={async () => {
   try {
     const predicted = toTrashType(predictionResult);
-    const actual = toTrashType(failText);
+    const actual = selectedTrashType;
 
     if (!predicted || !actual) {
-      Alert.alert("Invalid trash type");
+      Alert.alert("Please select a trash type");
       return;
     }
     if (!base64Image) {
@@ -249,6 +303,7 @@ const closeReview = () => {
 }
     await submitModelResults(predicted, actual,base64Image );
     Alert.alert("Thanks for your feedback");
+    setSelectedTrashType(null);
     closeFail();
   } catch (err) {
     console.error(err);
@@ -257,7 +312,10 @@ const closeReview = () => {
 }}>
       <Text style={styles.bubbleText}>Submit feedback</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.imageBubble2} onPress={closeFail}>
+      <TouchableOpacity style={styles.imageBubble2} onPress={() => {
+        setSelectedTrashType(null);
+        closeFail();
+      }}>
       <Text style={styles.bubbleText}>close</Text>
       </TouchableOpacity>
       </ImageBackground>
@@ -381,6 +439,30 @@ modalContent: {
   padding: 20,
   alignItems: 'center',
   overflow: 'hidden',
+},
+trashButtonsContainer: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'center',
+  marginVertical: 20,
+},
+trashButton: {
+  backgroundColor: '#4ca626',
+  padding: 10,
+  margin: 5,
+  borderRadius: 10,
+  minWidth: 80,
+  alignItems: 'center',
+},
+selectedTrashButton: {
+  backgroundColor: '#2e7d1a',
+  borderWidth: 2,
+  borderColor: '#fff',
+},
+trashButtonText: {
+  color: '#FFFF',
+  fontSize: 16,
+  fontWeight: '600',
 },
 });
 function binCheck (trashtype: string){
