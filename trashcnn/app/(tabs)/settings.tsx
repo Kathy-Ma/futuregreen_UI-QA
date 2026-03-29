@@ -1,3 +1,4 @@
+// Settings screen showing troubleshooting notes, platform hints, and UI documentation links.
 import { Image } from 'expo-image';
 import { Platform, StyleSheet } from 'react-native';
 
@@ -11,7 +12,9 @@ import { Fonts } from '@/constants/theme';
 
 export default function TabTwoScreen() {
   return (
+    // Setting page UI starts here
     <ParallaxScrollView
+      // Settings page uses a parallax header image and collapsible content panels
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
       headerImage={
         <IconSymbol
@@ -88,6 +91,7 @@ export default function TabTwoScreen() {
   );
 }
 
+// Settings style sheet css
 const styles = StyleSheet.create({
   headerImage: {
     color: '#808080',
