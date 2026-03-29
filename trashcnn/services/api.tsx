@@ -1,3 +1,7 @@
+//////////////////////////////////////////////////////
+// THIS IS THE CODE FOR SENDING INFO TO THE BACKEND //
+//////////////////////////////////////////////////////
+
 const HOST = "https://ethnyao.pythonanywhere.com/api";
 //const HOST = "http://127.0.0.1:8000/api"; //local host ip address (used for testing when pythonAnywhere server doesnt work)
 
@@ -13,7 +17,9 @@ export enum TrashType {
     REJECTED = "rejected"
 }
 
-
+//Function to predict image result. Sends information about the image (base64Data, fileName, width, height) 
+// through a POST request to the backend. Then it waits for the result to come back from the backend. That 
+// value is stored in the res variable
 export async function predictImage(base64Data: string, fileName: string, width: number, height: number) {
     try {
         const body = {
@@ -24,13 +30,16 @@ export async function predictImage(base64Data: string, fileName: string, width: 
             image_height: height,
         };
 
+        // Sending the information and waiting for the result
         const res = await fetch(HOST + "/predict/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
         });
 
+        // If the return value from the backend is invalid, it throws an error
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        // If the return value is valid, it returns the result value
         return await res.json();
 
     } catch (error) {
