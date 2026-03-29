@@ -1,48 +1,76 @@
+// Frontend screen that connects user image input to the backend API in services/api.tsx.
+// It handles image picking, camera capture, prediction display, and feedback submission.
 import { useState } from 'react';
 import { Alert, Image, Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, ImageBackground, ScrollView} from 'react-native';
 import { predictImage, submitReview, submitModelResults, TrashType } from '@/services/api';
 import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
+  // Base64 image data ready to send to the backend prediction endpoint
   const [base64Image, setBase64Image] = useState<string | null>(null);
+
+  // History of previously analyzed images shown in the UI
   const [previousImages, setPreviousImages] = useState<
-  { uri: string; prediction: string | null; confidence: number | null }[]
->([]);
+    { uri: string; prediction: string | null; confidence: number | null }[]
+  >([]);
+
+  // URI for the currently selected or captured image
   const [image, setImage] = useState<string | null>(null);
+  // Controls whether the "wrong prediction" feedback modal is shown
   const [failVisible, setfailVisible] = useState(false);
+
+  // Convert a prediction string into a TrashType enum if valid
   const toTrashType = (value: string | null): TrashType | null => {
-  if (!value) return null;
+    if (!value) return null;
 
   const normalized = value.toLowerCase();
 
   if (Object.values(TrashType).includes(normalized as TrashType)) {
-    return normalized as TrashType;
+      return normalized as TrashType;
   }
 
   return null;
 };
+
   const openFail = () => {
     setfailVisible(true);
   };
+
   const closeFail = () => {
     setfailVisible(false);
   };
-  const [reviewVisible, setReviewVisible] = useState(false);
-  const openReview = () => {
-  setReviewVisible(true);
-};
 
-const closeReview = () => {
-  setReviewVisible(false);
-};
+  // Controls whether the rating / review modal is visible
+  const [reviewVisible, setReviewVisible] = useState(false);
+
+  const openReview = () => {
+    setReviewVisible(true);
+  };
+
+  const closeReview = () => {
+    setReviewVisible(false);
+  };
+  // User-facing message about the current prediction / recommendation
   const [message, setMessage] = useState<string | null>(null);
+
+  // Star rating selected in the review modal
   const [starState, setStarState] = useState(0);
   const handleStarPress = (rating: number) => {
-  setStarState(rating);
-};
+    setStarState(rating);
+  };
+
+  // Text input for the review modal
   const [reviewText, setReviewText] = useState('');
+
+  // Trash type selected when the user reports an incorrect prediction
   const [selectedTrashType, setSelectedTrashType] = useState<TrashType | null>(null);
+
+  // Latest backend prediction result from predictImage()
   const [predictionResult, setPredictionResult] = useState<string | null>(null);
+
+  // Latest backend confidence value from predictImage()
   const [confidence, setConfidence] = useState<number | null>(null);
+
+  // Capture a photo from the camera and send the image to the backend prediction endpoint
   const takePhoto = async () => {
     const cameraResult = await ImagePicker.requestCameraPermissionsAsync();
     if(!cameraResult.granted) {
@@ -114,6 +142,7 @@ const closeReview = () => {
 }
   }
 
+  // Select an image from the media library and send it to the backend prediction endpoint
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     //if no permission return an error alert
@@ -148,6 +177,7 @@ const closeReview = () => {
   setConfidence(null);
   setMessage(null);
 
+  // Call the backend prediction API from services/api.tsx
   try {
     const result = await predictImage(
       base64Image,
@@ -156,6 +186,7 @@ const closeReview = () => {
       asset.height,
     );
     console.log('Prediction result:', result);
+    // if result is rejected
     if (result.error) {
       setPredictionResult("rejected");
       setMessage("Rejection: " + result.error);
@@ -231,6 +262,7 @@ const closeReview = () => {
   onChangeText={setReviewText}
   multiline
 />
+{/* Submit rating and review text to the backend */}
 <TouchableOpacity style={styles.imageBubble2} onPress={async () => {
   try {
     await submitReview(starState, reviewText);
@@ -288,6 +320,7 @@ const closeReview = () => {
           );
         })}
       </ScrollView>
+      {/* Submit corrected trash type and image data back to the backend for model feedback */}
 <TouchableOpacity style={styles.imageBubble2} onPress={async () => {
   try {
     const predicted = toTrashType(predictionResult);
@@ -321,6 +354,7 @@ const closeReview = () => {
       </ImageBackground>
     </View>
 </Modal>
+{/*Action page UI starts here*/}
        <Text style={styles.title}>Future Fusion AI</Text>
 
   <TouchableOpacity style={styles.imageBubble} onPress={pickImage}>
@@ -370,6 +404,8 @@ const closeReview = () => {
 
   );
 }
+
+// Action style sheet css
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -465,6 +501,8 @@ trashButtonText: {
   fontWeight: '600',
 },
 });
+
+// Translate a trash category into a user-friendly bin recommendation message
 function binCheck (trashtype: string){
   let message = null
   if (trashtype=="metal"){

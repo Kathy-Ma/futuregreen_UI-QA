@@ -1,3 +1,5 @@
+// Home / intro screen for the app.
+// Shows usage steps, sample UI, and includes image picker permissions logic.
 import { useState } from 'react';
 import { Alert, Button, Image, View, StyleSheet, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -10,6 +12,7 @@ import { HelloWave } from '@/components/hello-wave';
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
 
+  // Prompt for media library permissions and allow the user to pick an image or video.
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library.
     // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
@@ -38,6 +41,7 @@ export default function ImagePickerExample() {
   };
 
   return (
+    // Home page UI starts here
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
@@ -98,6 +102,7 @@ export default function ImagePickerExample() {
   );
 }
 
+// Home style sheet css
 const styles = StyleSheet.create({
   container: {
     flex: 1,
