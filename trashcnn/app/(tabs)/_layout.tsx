@@ -20,19 +20,12 @@ export default function TabLayout() {
         }
       }}>
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="action"
         options={{
           title: 'Scan Trash',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="photo.badge.magnifyingglass.fill" color={color} />,
-        }}
-      />
+        }}></Tabs.Screen>
+      
       <Tabs.Screen
         name="settings"
         options={{
@@ -40,6 +33,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <IconSymbol size={26} name="gearshape.fill" color={color} />,
         }}
       />
+       <Tabs.Screen
+        name="info"
+        options={{
+          title: 'Info',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="info.circle" color={color} />,
+        }}
+      />  
     </Tabs>
   );
 }

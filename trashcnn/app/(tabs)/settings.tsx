@@ -34,8 +34,6 @@ export default function TabTwoScreen() {
         <ThemedText>
         Ensure that your image is at least ___ resolution. Also, there can only be one object that must be fully visible in frame. Finally, make sure the background is relatively solid with no major distractions.
         </ThemedText>
-        <ThemedText>
-        </ThemedText>
       </Collapsible>
       <Collapsible title="Android, iOS, and web support">
         <ThemedText>
