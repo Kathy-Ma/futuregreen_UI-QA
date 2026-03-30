@@ -97,6 +97,7 @@ export default function ImagePickerExample() {
         <ThemedText>
           Follow the prediction results to help keep our environment clean!
         </ThemedText>
+        <ThemedText>*Results are not 100% reliable</ThemedText>
       </ThemedView>
     </ParallaxScrollView>
   );
