@@ -1,24 +1,19 @@
 // Home / intro screen for the app.
-// Shows usage steps, sample UI, and includes image picker permissions logic.
+// Shows usage steps and a refreshed eco-friendly landing experience.
 import { useState } from 'react';
-import { Alert, Button, Image, View, StyleSheet, Platform } from 'react-native';
+import { Alert, Image, View, StyleSheet, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedView } from '@/components/themed-view';
 import { ThemedText } from '@/components/themed-text';
-import { HelloWave } from '@/components/hello-wave';
+import { setPendingImage } from '@/services/imageStore';
 
 export default function ImagePickerExample() {
   const [image, setImage] = useState<string | null>(null);
+  const router = useRouter();
 
-  // Prompt for media library permissions and allow the user to pick an image or video.
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library.
-    // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
-    // and `videoExportPreset` is `'Passthrough'` (the default), ideally before launching the picker
-    // so the app users aren't surprised by a system dialog after picking a video.
-    // See "Invoke permissions for videos" sub section for more details.
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
@@ -26,108 +21,195 @@ export default function ImagePickerExample() {
       return;
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'],
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
-    console.log(result);
+    if (!result.canceled && result.assets?.length > 0) {
+      const asset = result.assets[0];
+      if (!asset.base64) {
+        Alert.alert('Upload failed', 'No base64 image data was available.');
+        return;
+      }
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setPendingImage({
+        uri: asset.uri,
+        base64: asset.base64,
+        fileName: asset.fileName ?? 'image.jpg',
+        width: asset.width ?? 0,
+        height: asset.height ?? 0,
+      });
+
+      router.push('/action');
     }
   };
 
   return (
-    // Home page UI starts here
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#4E9F61', dark: '#1F472F' }}
       headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText>The future of waste sorting is here. Follow the steps below, and let Future Fusion AI decide where your garbage belongs. </ThemedText>
-        <ThemedView style={[styles.stepContainer, { marginBottom: 10 }]}>
+        <View style={styles.heroBadge}>
+          <ThemedText type="title" style={styles.heroEmoji}>♻️</ThemedText>
+        </View>
+      }
+    >
+      <ThemedView style={styles.pageWrapper}>
+        <ThemedView style={styles.heroSection}>
+          <ThemedText type="title" style={styles.heroTitle}>
+            Future Fusion AI
+          </ThemedText>
+          <ThemedText style={styles.heroSubtitle}>
+            Smart recycling guidance to help you sort trash the right way.
+          </ThemedText>
         </ThemedView>
-        <ThemedText type="subtitle">Step 1: Upload or Take an Image</ThemedText>
-        <ThemedText>
-          Upload an image from your gallery, or take a photo directly through your camera. Ensure there is only one object, fully in frame.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Wait for the AI to Process</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          This may take up to ___ seconds. Click the settings tab to troubleshoot if an upload has failed, or if a result does not appear.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Accurately Sort Your Trash</ThemedText>
-        <ThemedText>
-          Follow the prediction results to help keep our environment clean!
-        </ThemedText>
+        <TouchableOpacity style={styles.primaryButton} onPress={pickImage}>
+          <ThemedText style={styles.buttonText}>Upload or Take Photo</ThemedText>
+        </TouchableOpacity>
+
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.cardTitle}>
+            Step 1: Upload or Take an Image
+          </ThemedText>
+          <ThemedText style={styles.cardText}>
+            Choose a photo of your item. Make sure the object is fully visible and the background is clear.
+          </ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.card}>
+          <Link href="/modal">
+            <ThemedText type="subtitle" style={styles.linkText}>
+              Step 2: Wait for the AI to Process
+            </ThemedText>
+          </Link>
+          <ThemedText style={styles.cardText}>
+            Our model reviews the image and returns the best recycling category for your item.
+          </ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.cardTitle}>
+            Step 3: Sort with Confidence
+          </ThemedText>
+          <ThemedText style={styles.cardText}>
+            Use the prediction to place your waste in the correct bin and keep the planet cleaner.
+          </ThemedText>
+        </ThemedView>
+
+        {image ? (
+          <View style={styles.previewCard}>
+            <Image source={{ uri: image }} style={styles.previewImage} />
+            <ThemedText style={styles.previewText}>Preview selected image</ThemedText>
+          </View>
+        ) : null}
       </ThemedView>
     </ParallaxScrollView>
   );
 }
 
-// Home style sheet css
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  pageWrapper: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    width: '100%',
+  },
+  heroBadge: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#DFF5E3',
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+    alignSelf: 'center',
+    marginTop: 20,
   },
-  image: {
-    width: 200,
-    height: 200,
+  heroEmoji: {
+    fontSize: 42,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  heroSection: {
+    marginTop: 24,
+    marginBottom: 18,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
+  heroTitle: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: '800',
+    color: '#15472B',
   },
-  stepContainer: {
-    gap: 8,
+  heroSubtitle: {
+    marginTop: 12,
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#3D6B45',
+  },
+  card: {
+    backgroundColor: '#EFF8EF',
+    borderRadius: 18,
+    padding: 18,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+    width: '100%',
+  },
+  cardTitle: {
+    color: '#226B3E',
     marginBottom: 8,
+  },
+  cardText: {
+    color: '#466B4D',
+    lineHeight: 22,
+  },
+  linkText: {
+    color: '#2F7D4D',
+    marginBottom: 8,
+  },
+  primaryButton: {
+    backgroundColor: '#3F7D4A',
+    paddingVertical: 16,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 14,
+    width: '100%',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  previewCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 14,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
+    width: '100%',
+  },
+  previewImage: {
+    width: '100%',
+    height: 220,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  previewText: {
+    color: '#3D6B45',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
 

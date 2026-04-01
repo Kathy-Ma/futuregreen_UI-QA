@@ -1,108 +1,174 @@
-// Settings screen showing troubleshooting notes, platform hints, and UI documentation links.
+// Settings screen for recycling tips and app support.
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 
 import { Collapsible } from '@/components/ui/collapsible';
 import { ExternalLink } from '@/components/external-link';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
 
 export default function TabTwoScreen() {
   return (
-    // Setting page UI starts here
     <ParallaxScrollView
-      // Settings page uses a parallax header image and collapsible content panels
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+      headerBackgroundColor={{ light: '#A6D3A2', dark: '#1E4F2F' }}
       headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-          }}>
-          Settings
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>Light/Dark Mode: (insert a toggle switch)</ThemedText>
-      <Collapsible title="Troubleshooting">
-        <ThemedText>
-        Ensure that your image is at least ___ resolution. Also, there can only be one object that must be fully visible in frame. Finally, make sure the background is relatively solid with no major distractions.
-        </ThemedText>
-        <ThemedText>
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
+        <View style={styles.headerBadge}>
+          <ThemedText type="title" style={styles.headerBadgeText}>♻️</ThemedText>
+        </View>
+      }
+    >
+      <ThemedView style={styles.pageWrapper}>
+        <ThemedView style={styles.titleContainer}>
+          <ThemedText type="title" style={styles.titleText}>
+            Settings
+          </ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.cardTitle}>
+            Recycling tips
+          </ThemedText>
+          <ThemedText style={styles.cardText}>
+            Keep items clean and dry before recycling, remove lids when possible, and avoid mixing materials in the same bin.
+          </ThemedText>
+        </ThemedView>
+
+        <View style={styles.sectionMargin}>
+          <Collapsible title="Troubleshooting">
+            <ThemedText style={styles.cardText}>
+              If predictions fail, try using a bright, simple background and center one object in the frame.
             </ThemedText>
-          ),
-        })}
-      </Collapsible>
+          </Collapsible>
+        </View>
+
+        <View style={styles.sectionMargin}>
+          <Collapsible title="Platform support">
+            <ThemedText style={styles.cardText}>
+              This app supports Android, iOS, and web. For web, run the project and press{' '}
+              <ThemedText type="defaultSemiBold">w</ThemedText> in your terminal.
+            </ThemedText>
+          </Collapsible>
+        </View>
+
+        <ThemedView style={styles.card}>
+          <ThemedText type="subtitle" style={styles.cardTitle}>
+            Learn more
+          </ThemedText>
+          <ThemedText style={styles.cardText}>
+            Find more info about images, theming, and performance in Expo documentation.
+          </ThemedText>
+          <ExternalLink href="https://docs.expo.dev">
+            <ThemedText type="link">Visit Expo docs</ThemedText>
+          </ExternalLink>
+        </ThemedView>
+
+        <ThemedView style={styles.helpSection}>
+          <Image
+            source={require('@/assets/images/react-logo.png')}
+            style={styles.helpImage}
+          />
+          <ThemedText style={styles.helpNote}>
+            Tip: use a solid background and a single item to get the best recycling suggestions from the AI.
+          </ThemedText>
+        </ThemedView>
+
+        <View style={styles.sectionMargin}>
+          <Collapsible title="About the interface">
+            <ThemedText style={styles.cardText}>
+              This screen uses a clean green palette and collapsible cards to keep settings focused and easy to scan.
+            </ThemedText>
+            {Platform.select({
+              ios: (
+                <ThemedText style={styles.cardText}>
+                  On iOS, the parallax header gives a fresh, modern feel to the settings page.
+                </ThemedText>
+              ),
+            })}
+          </Collapsible>
+        </View>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
 
-// Settings style sheet css
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  pageWrapper: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    width: '100%',
+  },
+  pageContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+  },
+  headerBadge: {
+    width: 100,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#E6F3E4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+  },
+  headerBadgeText: {
+    fontSize: 44,
   },
   titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  titleText: {
+    color: '#214E30',
+  },
+  card: {
+    backgroundColor: '#F5FBF4',
+    borderRadius: 20,
+    padding: 18,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 2,
+    width: '100%',
+  },
+  cardTitle: {
+    marginBottom: 10,
+    color: '#2E6E3B',
+  },
+  cardText: {
+    color: '#3E6E4B',
+    lineHeight: 22,
+  },
+  collapsible: {
+    marginVertical: 8,
+  },
+  helpSection: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 12,
+    padding: 16,
+    borderRadius: 20,
+    backgroundColor: '#EFF8EF',
+    width: '100%',
+  },
+  sectionMargin: {
+    marginVertical: 10,
+    width: '100%',
+  },
+  helpImage: {
+    width: 100,
+    height: 100,
+    marginBottom: 16,
+  },
+  helpNote: {
+    textAlign: 'center',
+    color: '#3D6A47',
+    lineHeight: 20,
   },
 });

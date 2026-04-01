@@ -1,9 +1,10 @@
 // Frontend screen that connects user image input to the backend API in services/api.tsx.
 // It handles image picking, camera capture, prediction display, and feedback submission.
-import { useState } from 'react';
-import { Alert, Image, Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, ImageBackground, ScrollView} from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, Image, Text, View, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView } from 'react-native';
 import { predictImage, submitReview, submitModelResults, TrashType } from '@/services/api';
 import * as ImagePicker from 'expo-image-picker';
+import { consumePendingImage, PendingImageData } from '@/services/imageStore';
 export default function ImagePickerExample() {
   // Base64 image data ready to send to the backend prediction endpoint
   const [base64Image, setBase64Image] = useState<string | null>(null);
@@ -69,6 +70,57 @@ export default function ImagePickerExample() {
 
   // Latest backend confidence value from predictImage()
   const [confidence, setConfidence] = useState<number | null>(null);
+
+  const processImageUpload = async (pending: PendingImageData) => {
+    setImage(pending.uri);
+    setBase64Image(pending.base64);
+    setPredictionResult(null);
+    setConfidence(null);
+    setMessage(null);
+
+    try {
+      const result = await predictImage(
+        pending.base64,
+        pending.fileName,
+        pending.width,
+        pending.height,
+      );
+
+      console.log('Prediction result:', result);
+      if (result.error) {
+        setPredictionResult('rejected');
+        setMessage('Rejection: ' + result.error);
+        setConfidence(null);
+        setPreviousImages(prev => [
+          ...prev,
+          { uri: pending.uri, prediction: 'rejected', confidence: null },
+        ]);
+        return;
+      }
+
+      const msg = binCheck(result.prediction_result);
+      setMessage(msg);
+      setPredictionResult(result.prediction_result);
+      setConfidence(result.confidence);
+      setPreviousImages(prev => [
+        ...prev,
+        {
+          uri: pending.uri,
+          prediction: result.prediction_result,
+          confidence: result.confidence,
+        },
+      ]);
+    } catch (error) {
+      console.error('Error predicting image:', error);
+    }
+  };
+
+  useEffect(() => {
+    const pending = consumePendingImage();
+    if (pending) {
+      processImageUpload(pending);
+    }
+  }, []);
 
   // Capture a photo from the camera and send the image to the backend prediction endpoint
   const takePhoto = async () => {
@@ -219,12 +271,8 @@ export default function ImagePickerExample() {
 }
   };
   return (
-    <ImageBackground
-    source={require('@/assets/UIQAimages/background.png')}
-    style={styles.container}
-    resizeMode="cover"
-    >
-      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 50 }}>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         
         <Modal
   animationType="fade"
@@ -233,11 +281,7 @@ export default function ImagePickerExample() {
   onRequestClose={closeReview}
 >
   <View style={styles.modalOverlay}>
-    <ImageBackground
-  source={require('@/assets/UIQAimages/popupBackground.png')}
-  style={styles.modalContent}
-  resizeMode="cover"
->
+    <View style={styles.modalContent}>
       <Text style={styles.title2}>How'd we do?</Text>
 <View style={{ flexDirection: "row", justifyContent: "center", marginTop:20, marginBottom:20,}}>
   {[1, 2, 3, 4, 5].map((star) => (
@@ -278,7 +322,7 @@ export default function ImagePickerExample() {
       <TouchableOpacity style={styles.imageBubble2} onPress={closeReview}>
       <Text style={styles.bubbleText}>close</Text>
       </TouchableOpacity>
-      </ImageBackground>
+      </View>
     </View>
 </Modal>
 <Modal
@@ -288,11 +332,7 @@ export default function ImagePickerExample() {
   onRequestClose={closeFail}
 >
   <View style={styles.modalOverlay}>
-    <ImageBackground
-  source={require('@/assets/UIQAimages/popupBackground.png')}
-  style={styles.modalContent}
-  resizeMode="cover"
->
+    <View style={styles.modalContent}>
       <Text style={styles.title2}>What trash was it?</Text>
       <ScrollView contentContainerStyle={styles.trashButtonsContainer}>
         {Object.values(TrashType).map((type) => {
@@ -351,23 +391,23 @@ export default function ImagePickerExample() {
       }}>
       <Text style={styles.bubbleText}>close</Text>
       </TouchableOpacity>
-      </ImageBackground>
+      </View>
     </View>
 </Modal>
 {/*Action page UI starts here*/}
        <Text style={styles.title}>Future Fusion AI</Text>
 
-  <TouchableOpacity style={styles.imageBubble} onPress={pickImage}>
-    <Text style={styles.bubbleText}>Upload from Camera Roll</Text>
-  </TouchableOpacity>
-
-    <View style={{ height: 20 }} />
-
   <TouchableOpacity style={styles.imageBubble} onPress={takePhoto}>
     <Text style={styles.bubbleText}>Take Photo</Text>
   </TouchableOpacity>
 
-  {image && <Image source={{ uri: image }} style={styles.image} />}
+    <View style={{ height: 20 }} />
+
+  <TouchableOpacity style={styles.imageBubble} onPress={pickImage}>
+    <Text style={styles.bubbleText}>Upload from Camera Roll</Text>
+  </TouchableOpacity>
+
+  {image && <Image source={{ uri: image }} style={styles.image} resizeMode="contain" />}
   {image && <Text style={styles.resultTitle}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
   {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
   {message && <Text style={styles.subtitle}>{message}</Text>}
@@ -400,7 +440,7 @@ export default function ImagePickerExample() {
   )}
 </ScrollView>
   </ScrollView>
-</ImageBackground>
+</View>
 
   );
 }
@@ -409,71 +449,99 @@ export default function ImagePickerExample() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#132908',
+    backgroundColor: '#F5FCF7',
+    paddingTop: 60,
+    paddingHorizontal: 16,
+  },
+  scrollContent: {
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 100,
+    paddingBottom: 50,
+    width: '100%',
   },
   title:{
-    fontSize:30,
-    color: '#FFFF',
-    fontWeight:'bold',
-    marginBottom: 60,
+    fontSize: 32,
+    color: '#1B5A35',
+    fontWeight:'800',
+    marginBottom: 24,
+    textAlign: 'center',
   },
   title2:{
     fontSize:30,
-    color: '#FFFF',
+    color: '#2E6D3D',
     fontWeight:'bold',
     marginTop: 20,
   },
   resultTitle:{
     fontSize:30,
-    color: '#FFFF',
+    color: '#2A5D31',
     fontWeight:'bold',
     marginBottom:20,
+    textAlign: 'center',
   },
   subtitle:{
     fontSize: 20,
-    color: '#FFFF',
+    color: '#315C35',
     fontWeight: 'normal',
     marginTop: 5,
     marginBottom:10,
     textAlign: 'center',
   },
   image: {
-    width: 200, 
-    height: 300,
-    marginTop:15,
-    marginBottom:15,
+    width: '95%',
+    maxWidth: 360,
+    height: 320,
+    marginTop: 15,
+    marginBottom: 15,
+    borderRadius: 18,
+    backgroundColor: '#F0F7F0',
   },
   imageBubble:{
-    backgroundColor:'#4ca626',
-    padding: 6,
-    borderRadius: 11,
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor:'#3F7D4A',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    marginVertical: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    alignItems: 'center',
   },
   bubbleText:{
-    color:'#FFFF',
+    color:'#FFFFFF',
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '700',
   },
   imageBubble2:{
-    backgroundColor:'#4ca626',
-    padding:6,
-    borderRadius: 11,
-    marginBottom:20,
+    width: '100%',
+    maxWidth: 380,
+    backgroundColor:'#5AAE5F',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    marginVertical: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    alignItems: 'center',
   },
  modalOverlay: {
   flex: 1,
-  backgroundColor: 'rgba(0,0,0,0.5)',
+  backgroundColor: 'rgba(0,0,0,0.35)',
   justifyContent: 'center',
   alignItems: 'center',
 },
 
 modalContent: {
-  width: 300,
-  borderRadius: 10,
-  padding: 20,
+  width: '92%',
+  maxWidth: 340,
+  borderRadius: 20,
+  padding: 22,
   alignItems: 'center',
+  backgroundColor: '#F7FFF4',
   overflow: 'hidden',
 },
 trashButtonsContainer: {
@@ -483,20 +551,20 @@ trashButtonsContainer: {
   marginVertical: 20,
 },
 trashButton: {
-  backgroundColor: '#4ca626',
-  padding: 10,
+  backgroundColor: '#66A86D',
+  padding: 12,
   margin: 5,
-  borderRadius: 10,
-  minWidth: 80,
+  borderRadius: 12,
+  minWidth: 90,
   alignItems: 'center',
 },
 selectedTrashButton: {
-  backgroundColor: '#2e7d1a',
+  backgroundColor: '#3F7D4A',
   borderWidth: 2,
-  borderColor: '#fff',
+  borderColor: '#DFF2E8',
 },
 trashButtonText: {
-  color: '#FFFF',
+  color: '#FFFFFF',
   fontSize: 16,
   fontWeight: '600',
 },
