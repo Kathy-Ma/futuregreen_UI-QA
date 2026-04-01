@@ -11,6 +11,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
@@ -21,7 +22,7 @@ export default function TabLayout() {
       }}>
       
       <Tabs.Screen
-        name="action"
+        name="index"
         options={{
           title: 'Scan Trash',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="photo.badge.magnifyingglass.fill" color={color} />,
