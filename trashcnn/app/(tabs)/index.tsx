@@ -220,7 +220,7 @@ export default function ImagePickerExample() {
   };
   return (
     <ImageBackground
-    source={require('@/assets/UIQAimages/background.png')}
+    source={require('@/assets/UIQAimages/bkg2.jpg')}
     style={styles.container}
     resizeMode="cover"
     >
