@@ -7,7 +7,8 @@ import * as ImagePicker from 'expo-image-picker';
 export default function ImagePickerExample() {
   // Base64 image data ready to send to the backend prediction endpoint
   const [base64Image, setBase64Image] = useState<string | null>(null);
-
+  //loading constant for the gif
+  const [loading, setLoading] = useState(false);
   // History of previously analyzed images shown in the UI
   const [previousImages, setPreviousImages] = useState<
     { uri: string; prediction: string | null; confidence: number | null }[]
@@ -100,7 +101,7 @@ export default function ImagePickerExample() {
   setPredictionResult(null);
   setConfidence(null);
   setMessage(null);
-
+  setLoading(true);
   try {
     const result = await predictImage(
       base64Image,
@@ -137,6 +138,9 @@ export default function ImagePickerExample() {
 ]);
   } catch (error) {
     console.error('Error predicting image:', error);
+  }
+  finally{
+    setLoading(false);
   }
 
 }
@@ -178,6 +182,7 @@ export default function ImagePickerExample() {
   setMessage(null);
 
   // Call the backend prediction API from services/api.tsx
+  setLoading(true);
   try {
     const result = await predictImage(
       base64Image,
@@ -215,6 +220,9 @@ export default function ImagePickerExample() {
 ]);
   } catch (error) {
     console.error('Error predicting image:', error);
+  }
+  finally{
+    setLoading(false);
   }
 }
   };
@@ -370,7 +378,18 @@ export default function ImagePickerExample() {
   </TouchableOpacity>
 
   {image && <Image source={{ uri: image }} style={styles.image} />}
-  {image && <Text style={styles.resultTitle}>Your garbage is {predictionResult || '(analyzing...)'}</Text>}
+  {image && <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 20 }}>
+    
+    <Text style={styles.resultTitle}>
+      Your garbage is {predictionResult || '(analyzing...)'}
+    </Text>
+    {loading &&(
+      <Image
+        source={require('@/assets/uiqa_gifs/spinner.gif')}
+        style={{ width: 50, height: 50, marginLeft: 10, marginTop:-15 }}
+      />
+    )}
+  </View>}
   {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
   {message && <Text style={styles.subtitle}>{message}</Text>}
   {previousImages.length != 0 ? (
@@ -437,7 +456,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   resultTitle:{
-    fontSize:30,
+    fontSize:25,
     color: '#FFFF',
     fontWeight:'bold',
     marginBottom:20,

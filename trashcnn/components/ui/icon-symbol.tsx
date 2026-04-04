@@ -20,7 +20,7 @@ const MAPPING = {
   'chevron.right': 'chevron-right',
 
   'gearshape.fill': 'settings',
-  'photo.badge.magnifyingglass.fill': 'image-search', // or 'search' / 'camera-alt'
+  'photo.badge.magnifyingglass.fill': 'image-search',
 } as IconMapping;
 
 /**
