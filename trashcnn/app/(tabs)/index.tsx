@@ -355,6 +355,8 @@ export default function ImagePickerExample() {
     </View>
 </Modal>
 {/*Action page UI starts here*/}
+       <Text style={styles.heading}>Powered by AI trained on local recycling guidelines</Text>      
+
        <Text style={styles.title}>Future Fusion AI</Text>
 
   <TouchableOpacity style={styles.imageBubble} onPress={pickImage}>
@@ -384,7 +386,7 @@ export default function ImagePickerExample() {
 <Text style={styles.title2}>Previous Images</Text>
   <ScrollView horizontal style={{ marginTop: 20 }}>
   {previousImages.length == 0 ? (
-    <Text style={styles.subtitle}>Nothing here yet</Text>
+    <Text style={styles.subtitle2}>Your scanned items will appear here</Text>
   ) : (
     previousImages.map((item, index) => (
       <View key={index} style={{ marginRight: 10, alignItems: 'center' }}>
@@ -412,7 +414,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#132908',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 100,
+    paddingTop: 70,
+
+  },
+  heading:{
+    fontSize: 9,
+    color: '#FFFF',
+    fontWeight:'normal',
+    marginBottom: 50,
+
   },
   title:{
     fontSize:30,
@@ -435,6 +445,14 @@ const styles = StyleSheet.create({
   subtitle:{
     fontSize: 20,
     color: '#FFFF',
+    fontWeight: 'normal',
+    marginTop: 5,
+    marginBottom:10,
+    textAlign: 'center',
+  },
+  subtitle2:{
+    fontSize: 16,
+    color: '#ffffffa6',
     fontWeight: 'normal',
     marginTop: 5,
     marginBottom:10,

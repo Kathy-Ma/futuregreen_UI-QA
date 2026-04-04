@@ -35,7 +35,7 @@ export default function TabTwoScreen() {
       <ThemedText>Light/Dark Mode: (insert a toggle switch)</ThemedText>
       <Collapsible title="Troubleshooting">
         <ThemedText>
-        Ensure that your image is at least ___ resolution. Also, there can only be one object that must be fully visible in frame. Finally, make sure the background is relatively solid with no major distractions.
+        Ensure there is only one object, fully in frame. Ensure that your image is at least an appropriate resolution. Finally, make sure the background is solid with no visible distractions.
         </ThemedText>
         <ThemedText>
         </ThemedText>

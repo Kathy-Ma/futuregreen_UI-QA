@@ -61,7 +61,7 @@ export default function ImagePickerExample() {
         </ThemedView>
         <ThemedText type="subtitle">Step 1: Upload or Take an Image</ThemedText>
         <ThemedText>
-          Upload an image from your gallery, or take a photo directly through your camera. Ensure there is only one object, fully in frame.
+          Upload an image from your gallery, or take a photo directly through your camera.
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
@@ -89,7 +89,7 @@ export default function ImagePickerExample() {
         </Link>
 
         <ThemedText>
-          This may take up to ___ seconds. Click the settings tab to troubleshoot if an upload has failed, or if a result does not appear.
+          This may take up to 15 seconds. Click the settings tab to troubleshoot.
         </ThemedText>
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
@@ -97,8 +97,8 @@ export default function ImagePickerExample() {
         <ThemedText>
           Follow the prediction results to help keep our environment clean!
         </ThemedText>
-        <ThemedText>*Results are not 100% reliable</ThemedText>
       </ThemedView>
+      <ThemedText style={{ fontSize: 12, paddingTop: 16}}>*Results are not 100% reliable</ThemedText>
     </ParallaxScrollView>
   );
 }
