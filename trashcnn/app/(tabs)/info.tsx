@@ -43,11 +43,11 @@ export default function ImagePickerExample() {
   return (
     // Home page UI starts here
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#c0dca1', dark: '#1d4724' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={require('@/assets/UIQAimages/bkg2.jpg')}
+          style={{ height: 300, width: 400}}
         />
       }>
       <ThemedView style={styles.titleContainer}>
