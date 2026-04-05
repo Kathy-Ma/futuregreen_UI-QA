@@ -386,7 +386,7 @@ export default function ImagePickerExample() {
     {loading &&(
       <Image
         source={require('@/assets/uiqa_gifs/spinner.gif')}
-        style={{ width: 50, height: 50, marginLeft: 10, marginTop:-15 }}
+        style={{ width: 50, height: 50, marginLeft: 5, marginTop:-15 }}
       />
     )}
   </View>}
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
 
   },
   heading:{
-    fontSize: 9,
+    fontSize: 10,
     color: '#FFFF',
     fontWeight:'normal',
     marginBottom: 50,
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
     color: '#FFFF',
     fontWeight: 'normal',
     marginTop: 5,
-    marginBottom:10,
+    marginBottom:20,
     textAlign: 'center',
   },
   subtitle2:{
@@ -487,6 +487,8 @@ const styles = StyleSheet.create({
     backgroundColor:'#4ca626',
     padding: 6,
     borderRadius: 11,
+    marginBottom:5,
+
   },
   bubbleText:{
     color:'#FFFF',
@@ -497,7 +499,7 @@ const styles = StyleSheet.create({
     backgroundColor:'#4ca626',
     padding:6,
     borderRadius: 11,
-    marginBottom:20,
+    marginBottom:25,
   },
  modalOverlay: {
   flex: 1,
@@ -543,25 +545,25 @@ trashButtonText: {
 function binCheck (trashtype: string){
   let message = null
   if (trashtype=="metal"){
-    message = "This goes in the recycling bin, remember to remove any food or liquids inside"
+    message = "In Halton Region, this goes in the recycling bin, remember to remove any food or liquids inside"
   }
   else if (trashtype=="paper"){
-    message = "This goes in the recycling bin, remember to remove any contents inside"
+    message = "In Halton Region, this goes in the recycling bin, remember to remove any contents inside"
   }
   else if (trashtype=="cardboard"){
-    message = "This goes in the recycling bin, please flatten and remove any food residue"
+    message = "In Halton Region, this goes in the recycling bin, please flatten and remove any food residue"
   }
   else if (trashtype=="glass"){
-    message = "This goes in the recycling bin, please remove any liquids inside and remove the lid if it is present"
+    message = "In Halton Region, this goes in the recycling bin, please remove any liquids inside and remove the lid if it is present"
   }
   else if (trashtype=="plastic"){
-    message = "This goes in the recycling bin, please remove any food residue"
+    message = "In Halton Region, this goes in the recycling bin, please remove any food residue"
   }
   else if (trashtype=="trash"){
-    message = "This goes in the garbage bin"
+    message = "In Halton Region, this goes in the garbage bin"
   }
   else if (trashtype=="organic"){
-    message = "This goes in the organics (green) bin, make sure all packaging is removed"
+    message = "In Halton Region, this goes in the organics (green) bin, make sure all packaging is removed"
   }
   return message
 }
