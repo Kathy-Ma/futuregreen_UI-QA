@@ -40,27 +40,8 @@ export default function ImagePickerExample() {
     setfailVisible(false);
   };
 
-  // Controls whether the rating / review modal is visible
-  const [reviewVisible, setReviewVisible] = useState(false);
-
-  const openReview = () => {
-    setReviewVisible(true);
-  };
-
-  const closeReview = () => {
-    setReviewVisible(false);
-  };
   // User-facing message about the current prediction / recommendation
   const [message, setMessage] = useState<string | null>(null);
-
-  // Star rating selected in the review modal
-  const [starState, setStarState] = useState(0);
-  const handleStarPress = (rating: number) => {
-    setStarState(rating);
-  };
-
-  // Text input for the review modal
-  const [reviewText, setReviewText] = useState('');
 
   // Trash type selected when the user reports an incorrect prediction
   const [selectedTrashType, setSelectedTrashType] = useState<TrashType | null>(null);
@@ -233,62 +214,6 @@ export default function ImagePickerExample() {
     resizeMode="cover"
     >
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 50 }}>
-        
-        <Modal
-  animationType="fade"
-  transparent={true}
-  visible={reviewVisible}
-  onRequestClose={closeReview}
->
-  <View style={styles.modalOverlay}>
-    <ImageBackground
-  source={require('@/assets/UIQAimages/popupBackground.png')}
-  style={styles.modalContent}
-  resizeMode="cover"
->
-      <Text style={styles.title2}>How'd we do?</Text>
-<View style={{ flexDirection: "row", justifyContent: "center", marginTop:20, marginBottom:20,}}>
-  {[1, 2, 3, 4, 5].map((star) => (
-    <TouchableOpacity key={star} onPress={() => handleStarPress(star)}>
-      <Image
-        source={
-          starState >= star
-            ? require('@/assets/UIQAimages/fullstar.png')
-            : require('@/assets/UIQAimages/emptystar.png')
-        }
-        resizeMode="contain"
-        style={{ width: 40, height: 40, marginHorizontal: 5 }}
-      />
-    </TouchableOpacity>
-  ))}
-</View>
-  <TextInput
-  style={styles.subtitle}
-  placeholder="Write your feedback..."
-  placeholderTextColor="#ccc"
-  value={reviewText}
-  onChangeText={setReviewText}
-  multiline
-/>
-{/* Submit rating and review text to the backend */}
-<TouchableOpacity style={styles.imageBubble2} onPress={async () => {
-  try {
-    await submitReview(starState, reviewText);
-    Alert.alert("Thanks for your feedback");
-    closeReview();
-  } catch (err) {
-    console.error(err);
-    Alert.alert("Failed to submit review");
-  }
-}}>
-      <Text style={styles.bubbleText}>Submit Review</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.imageBubble2} onPress={closeReview}>
-      <Text style={styles.bubbleText}>close</Text>
-      </TouchableOpacity>
-      </ImageBackground>
-    </View>
-</Modal>
 <Modal
   animationType="fade"
   transparent={true}
@@ -392,11 +317,6 @@ export default function ImagePickerExample() {
   </View>}
   {predictionResult && confidence && <Text style={styles.subtitle}>Confidence: {(confidence * 100).toFixed(2)}%</Text>}
   {message && <Text style={styles.subtitle}>{message}</Text>}
-  {previousImages.length != 0 ? (
- <TouchableOpacity style={styles.imageBubble2} onPress={openReview}>
-  <Text style={styles.bubbleText}>How'd we do?</Text>
-</TouchableOpacity>
-  ):null}
   {previousImages.length != 0? (
   <TouchableOpacity style={styles.imageBubble} onPress={openFail}>
   <Text style={styles.bubbleText}>Did we get it wrong?</Text>
