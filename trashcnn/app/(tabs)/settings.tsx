@@ -46,7 +46,7 @@ export default function TabTwoScreen() {
       </ThemedView>
       <Collapsible title="Troubleshooting">
         <ThemedText>
-        Ensure there is only one object, fully in frame. As well, check that your image is an appropriate resolution. Finally, make sure the background is solid with no visible distractions.
+        Ensure there is only one object, fully in frame. As well, check that your image has an appropriate resolution. Finally, make sure the background is solid with no visible distractions.
         </ThemedText>
       </Collapsible>
       <Collapsible title="Leave a Review">
