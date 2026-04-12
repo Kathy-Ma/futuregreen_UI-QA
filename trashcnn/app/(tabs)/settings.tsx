@@ -51,7 +51,7 @@ export default function TabTwoScreen() {
       </Collapsible>
       <Collapsible title="Leave a Review">
        <TouchableOpacity style={styles.imageBubble2} onPress={openReview}>
-        <Text style={styles.bubbleText}>How'd we do?</Text>
+        <Text style={styles.bubbleText2}>How'd we do?</Text>
       </TouchableOpacity>
       </Collapsible>
     </ParallaxScrollView>
@@ -189,6 +189,14 @@ const styles = StyleSheet.create({
 
   },
   bubbleText:{
+    color:'#FFFF',
+    fontSize: 18,
+    fontWeight: "600",
+    padding: 7,
+    backgroundColor:'#4ca626',
+    borderRadius: 11,
+  },  
+  bubbleText2:{
     color:'#FFFF',
     fontSize: 18,
     fontWeight: "600",
