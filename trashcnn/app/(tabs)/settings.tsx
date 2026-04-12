@@ -46,12 +46,12 @@ export default function TabTwoScreen() {
       </ThemedView>
       <Collapsible title="Troubleshooting">
         <ThemedText>
-        Ensure there is only one object, fully in frame. Ensure that your image is at least an appropriate resolution. Finally, make sure the background is solid with no visible distractions.
+        Ensure there is only one object, fully in frame. As well, check that your image has an appropriate resolution. Finally, make sure the background is solid with no visible distractions.
         </ThemedText>
       </Collapsible>
-      <Collapsible title="Reviews">
+      <Collapsible title="Leave a Review">
        <TouchableOpacity style={styles.imageBubble2} onPress={openReview}>
-        <Text style={styles.bubbleText}>How'd we do?</Text>
+        <Text style={styles.bubbleText2}>How'd we do?</Text>
       </TouchableOpacity>
       </Collapsible>
     </ParallaxScrollView>
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#132908',
+    backgroundColor: '#4ca626',
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 70,
@@ -192,6 +192,20 @@ const styles = StyleSheet.create({
     color:'#FFFF',
     fontSize: 18,
     fontWeight: "600",
+    padding: 7,
+    backgroundColor:'#4ca626',
+    borderRadius: 11,
+  },  
+  bubbleText2:{
+    color:'#FFFF',
+    fontSize: 18,
+    fontWeight: "600",
+    padding: 7,
+    backgroundColor:'#4ca626',
+    borderRadius: 11,
+    marginRight: 150,
+    marginLeft: 10,
+
   },
   imageBubble2:{
     backgroundColor:'132908',
